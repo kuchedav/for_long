@@ -7,6 +7,24 @@ import os
 from os import listdir
 import re
 
+
+# code to finsih up parallel processing
+if False:
+    # paralell processing
+    try:
+        from joblib import Parallel, delayed
+        import multiprocessing
+        num_cores = multiprocessing.cpu_count()
+    except: num_cores = None
+
+    if num_cores:
+        # paralell processing
+        # df_out = Parallel(n_jobs=num_cores)(delayed(iter_function)(iter_in,static_values,df_out,counter) for iter_in in progressbar(iter_input))
+        pass
+    else:
+        pass
+
+
 def for_long(iter_fun, iter_attr, save_every_n = 10, path = "./"):
     """
     for_long facilitates iterating over long running loops.
