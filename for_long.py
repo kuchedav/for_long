@@ -62,28 +62,30 @@ def for_long(iter_fun, iter_attr, save_every_n = 10, path = "./"):
     counter = 0
     if os.path.isfile(end_file_path):
         # load las calculated end file
+        print(f"Finsihed file {end_file_path} has been found")
         df_out = pd.read_csv(end_file_path)
     elif os.path.exists(path_backup):
         # find file with highest iter backup number
+        print(f"Started backup files {path_backup} have been found")
         for i in listdir(path_backup):
             m = re.search(f'{iter_fun.__name__}_(\d*).csv', i)
             if m and int(m.group(1)) > counter: counter = int(m.group(1))
         df_out = pd.read_csv(f"{path_backup}/{iter_fun.__name__}_{str(counter)}.csv")
     else:
         # create new empty data frame
+        print("No precalculated data has been found for " + str(iter_fun.__name__))
         df_out = pd.DataFrame(columns=[*iter_input[0],*static_values,"output"])
 
+    
+    [i.update(static_values) for i in iter_input]
+    
     # remove entries from iter_input which have already been calculated
-    try:
-        df_in = pd.DataFrame(iter_input)
-        if len(df_in.columns) == len(df_out.columns):
-            df_limited = df_in[~df_in.isin(df_out)].dropna()
-            iter_input = df_limited.to_dict("records")
-        else:
-            print("Number of attributes for the functions have changed. Function will run again over all combinations and append results.")
-    except:
-        pass
-
+    df_in = pd.DataFrame(iter_input)
+    if len(df_in.columns) == len(df_out.columns)-1:
+        df_limited = df_in[~df_in.isin(df_out)].dropna()
+        iter_attributes = df_limited.to_dict("records")
+    else:
+        print("Number of attributes for the functions have changed. Function will run again over all combinations and append results.")
 
     def iter_function(iter_in,static_values,df_out,counter):
         # run function
@@ -104,7 +106,7 @@ def for_long(iter_fun, iter_attr, save_every_n = 10, path = "./"):
         return df_out
 
     # iterate over function
-    for iter_in in progressbar(iter_input):
+    for iter_in in progressbar(iter_attributes):
         df_out = df_out.append(iter_function(iter_in,static_values,df_out,counter))
 
     # save last data frame END
@@ -129,7 +131,7 @@ if __name__=="__main__":
     # function to apply
     import time
     def concatenate_input(embeddings, embeddings_dim, verbose, quick_calc, range_attr = 0):
-        time.sleep(1)
+        time.sleep(0.01)
         return f"{embeddings} {str(embeddings_dim)} {verbose} {quick_calc} {range_attr}"
 
     df_out = for_long(iter_fun = concatenate_input, iter_attr = attribute_dict)
