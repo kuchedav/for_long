@@ -120,13 +120,25 @@ def for_long(iter_fun, iter_attr, save_every_n = 10, path = "./"):
 
 
 if __name__=="__main__":
+    """
+    Example Code:
+
+    from daves_utilities.for_long import for_long
+
+    letters = ["a","b","c","d"]
+    numbers = [10,20,40,100,500,1000]
+    attribute_dict = {"letters": letters, "numbers": numbers, "input_bool":True}
+
+    df_out = for_long(iter_fun = <my_function>, iter_attr = attribute_dict,
+                        save_every_n = 10, path = "./")>
+    """
 
     # create input
     embeddings = ["tf-idf","word2vec","doc2vec","bert"]
     embeddings_dim = [10,20,40,100,500,1000]
     range_attr = list(range(0,10))
     # combination
-    attribute_dict = {"embeddings":embeddings, "embeddings_dim":embeddings_dim, "verbose":True, "quick_calc":False, "range_attr":range_attr}
+    attribute_dict = {"embeddings":embeddings, "embeddings_dim":embeddings_dim, "verbose":True}
 
     # function to apply
     import time
